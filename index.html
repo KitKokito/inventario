@@ -859,6 +859,75 @@
             color: #ccc;
         }
 
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            cursor: pointer;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #666;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #E50695;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .toggle-slider:hover {
+            box-shadow: 0 0 8px rgba(229, 6, 149, 0.3);
+        }
+
+        .toggle-label {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #ccc;
+            min-width: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-label.active {
+            color: #E50695;
+        }
+
         @media (max-width: 768px) {
             .counters {
                 flex-direction: column;
@@ -986,6 +1055,12 @@
             .temporada-quantity-input {
                 text-align: center;
             }
+            
+            .toggle-container {
+                justify-content: center;
+                flex-direction: row;
+                gap: 10px;
+            }
         }
 
     </style>
@@ -1083,8 +1158,8 @@
                     <span class="counter-label">Total stencils</span>
                 </div>
                 <div class="counter">
-                    <span class="counter-number" id="totalColores">0</span>
-                    <span class="counter-label">Colores seleccionados</span>
+                    <span class="counter-number" id="totalItems">0</span>
+                    <span class="counter-label">Items adicionales</span>
                 </div>
             </div>
 
@@ -1121,13 +1196,12 @@
                                 <div class="producto-description">Para aplicar los tatuajes</div>
                             </div>
                         </div>
-                        <div class="quantity-controls">
-                            <button class="btn-quantity" onclick="decreaseProductoAdicional('pegaMagica')">−</button>
-                            <input type="number" class="quantity-input" id="qty-pega-magica" 
-                                   value="0" min="0" max="999" 
-                                   onchange="updateProductoAdicionalFromInput('pegaMagica')"
-                                   onkeypress="handleEnterKeyProducto(event, 'pegaMagica')">
-                            <button class="btn-quantity" onclick="increaseProductoAdicional('pegaMagica')">+</button>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="toggle-pega-magica" onchange="toggleProductoAdicional('pegaMagica')">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label" id="label-pega-magica">NO</span>
                         </div>
                     </div>
                     
@@ -1139,13 +1213,12 @@
                                 <div class="producto-description">Para transferir diseños</div>
                             </div>
                         </div>
-                        <div class="quantity-controls">
-                            <button class="btn-quantity" onclick="decreaseProductoAdicional('transfer')">−</button>
-                            <input type="number" class="quantity-input" id="qty-transfer" 
-                                   value="0" min="0" max="999" 
-                                   onchange="updateProductoAdicionalFromInput('transfer')"
-                                   onkeypress="handleEnterKeyProducto(event, 'transfer')">
-                            <button class="btn-quantity" onclick="increaseProductoAdicional('transfer')">+</button>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="toggle-transfer" onchange="toggleProductoAdicional('transfer')">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label" id="label-transfer">NO</span>
                         </div>
                     </div>
                 </div>
@@ -1274,8 +1347,8 @@
         let selectedColores = [];
         let motivosTemporada = [];
         let productosAdicionales = {
-            pegaMagica: 0,
-            transfer: 0
+            pegaMagica: false,
+            transfer: false
         };
         let currentStep = 1;
 
@@ -1551,62 +1624,41 @@
             return getTotalPaquetesTemporada() * 30;
         }
 
-        function increaseProductoAdicional(producto) {
-            productosAdicionales[producto]++;
-            document.getElementById(`qty-${producto.replace('M', '-m')}`).value = productosAdicionales[producto];
-            updateCounters();
-            updateSummary();
-            updateWhatsAppButton();
-        }
-
-        function decreaseProductoAdicional(producto) {
-            if (productosAdicionales[producto] > 0) {
-                productosAdicionales[producto]--;
-                document.getElementById(`qty-${producto.replace('M', '-m')}`).value = productosAdicionales[producto];
-                updateCounters();
-                updateSummary();
-                updateWhatsAppButton();
-            }
-        }
-
-        function updateProductoAdicionalFromInput(producto) {
-            const input = document.getElementById(`qty-${producto.replace('M', '-m')}`);
-            let value = parseInt(input.value) || 0;
+        function toggleProductoAdicional(producto) {
+            productosAdicionales[producto] = !productosAdicionales[producto];
             
-            if (value < 0) value = 0;
-            if (value > 999) value = 999;
+            // Actualizar el toggle visualmente
+            const toggle = document.getElementById(`toggle-${producto.replace('M', '-m')}`);
+            const label = document.getElementById(`label-${producto.replace('M', '-m')}`);
             
-            productosAdicionales[producto] = value;
-            input.value = value;
+            toggle.checked = productosAdicionales[producto];
+            label.textContent = productosAdicionales[producto] ? 'SÍ' : 'NO';
+            label.classList.toggle('active', productosAdicionales[producto]);
             
             updateCounters();
             updateSummary();
             updateWhatsAppButton();
-        }
-
-        function handleEnterKeyProducto(event, producto) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                updateProductoAdicionalFromInput(producto);
-                event.target.blur();
-            }
         }
 
         function updateCounters() {
             const totalPaquetes = getTotalPaquetes();
             const totalStencils = getTotalStencils();
             const totalColores = getTotalColores();
+            const productosSeleccionados = Object.values(productosAdicionales).filter(selected => selected === true).length;
+            const totalItems = totalColores + productosSeleccionados;
             
             animateCounter('totalPaquetes', totalPaquetes);
             animateCounter('totalStencils', totalStencils);
-            animateCounter('totalColores', totalColores);
+            animateCounter('totalItems', totalItems);
         }
 
         function updateSummary() {
             const totalPaquetes = getTotalPaquetes();
-            const hasProductosAdicionales = Object.values(productosAdicionales).some(qty => qty > 0);
+            const hasTemporada = motivosTemporada.some(motivo => motivo.nombre.trim() !== '' && motivo.cantidad > 0);
+            const hasColores = selectedColores.length > 0;
+            const hasProductosAdicionales = Object.values(productosAdicionales).some(selected => selected === true);
             
-            if (totalPaquetes > 0 || hasProductosAdicionales) {
+            if (totalPaquetes > 0 || hasTemporada || hasColores || hasProductosAdicionales) {
                 document.getElementById('summaryPaquetes').textContent = totalPaquetes;
                 document.getElementById('summaryStencils').textContent = getTotalStencils();
                 document.getElementById('summaryColores').textContent = getTotalColores();
@@ -1614,11 +1666,11 @@
                 // Mostrar productos adicionales si hay alguno
                 if (hasProductosAdicionales) {
                     let productosTexto = [];
-                    if (productosAdicionales.pegaMagica > 0) {
-                        productosTexto.push(`${productosAdicionales.pegaMagica} Pega Mágica`);
+                    if (productosAdicionales.pegaMagica) {
+                        productosTexto.push('✅ Pega Mágica');
                     }
-                    if (productosAdicionales.transfer > 0) {
-                        productosTexto.push(`${productosAdicionales.transfer} Transfer`);
+                    if (productosAdicionales.transfer) {
+                        productosTexto.push('✅ Transfer');
                     }
                     document.getElementById('summaryProductos').textContent = productosTexto.join(', ');
                     document.getElementById('summaryProductosContainer').style.display = 'flex';
@@ -1634,13 +1686,16 @@
 
         function updateWhatsAppButton() {
             const btn = document.getElementById('whatsappBtn');
-            const hasPaquetes = getTotalPaquetes() > 0 || motivosTemporada.length > 0;
-            const hasProductosAdicionales = Object.values(productosAdicionales).some(qty => qty > 0);
-            const hasColores = selectedColores.length > 0;
             const hasRequiredFields = validateRequiredFields();
             
-            // Debe tener al menos motivos O productos adicionales, y si tiene motivos debe tener colores
-            const hasValidSelection = hasPaquetes ? hasColores : hasProductosAdicionales;
+            // Verificar si tienen al menos algo seleccionado
+            const hasMotivos = getTotalPaquetes() > 0;
+            const hasTemporada = motivosTemporada.some(motivo => motivo.nombre.trim() !== '' && motivo.cantidad > 0);
+            const hasColores = selectedColores.length > 0;
+            const hasProductosAdicionales = Object.values(productosAdicionales).some(selected => selected === true);
+            
+            // Permitir envío si tienen al menos UNA de estas opciones
+            const hasValidSelection = hasMotivos || hasTemporada || hasColores || hasProductosAdicionales;
             
             btn.disabled = !hasValidSelection || !hasRequiredFields;
         }
@@ -1698,15 +1753,13 @@
 
         function enviarWhatsApp() {
             const totalPaquetes = getTotalPaquetes();
-            const hasProductosAdicionales = Object.values(productosAdicionales).some(qty => qty > 0);
+            const hasTemporada = motivosTemporada.some(motivo => motivo.nombre.trim() !== '' && motivo.cantidad > 0);
+            const hasColores = selectedColores.length > 0;
+            const hasProductosAdicionales = Object.values(productosAdicionales).some(selected => selected === true);
             
-            if (totalPaquetes === 0 && !hasProductosAdicionales) {
-                showAlert('❌ Debes seleccionar al menos un producto (motivos o productos adicionales)', 'danger');
-                return;
-            }
-            
-            if (totalPaquetes > 0 && !selectedColores.length) {
-                showAlert('❌ Si solicitas motivos, debes seleccionar al menos un color', 'danger');
+            // Verificar que tengan al menos algo seleccionado
+            if (totalPaquetes === 0 && !hasTemporada && !hasColores && !hasProductosAdicionales) {
+                showAlert('❌ Debes seleccionar al menos un producto', 'danger');
                 return;
             }
 
@@ -1760,30 +1813,32 @@
             // Productos adicionales
             if (hasProductosAdicionales) {
                 mensaje += "🧪 *PRODUCTOS ADICIONALES:*\n";
-                if (productosAdicionales.pegaMagica > 0) {
-                    mensaje += `• Pega Mágica: ${productosAdicionales.pegaMagica} unidades\n`;
+                if (productosAdicionales.pegaMagica) {
+                    mensaje += `• ✅ Pega Mágica\n`;
                 }
-                if (productosAdicionales.transfer > 0) {
-                    mensaje += `• Transfer: ${productosAdicionales.transfer} unidades\n`;
+                if (productosAdicionales.transfer) {
+                    mensaje += `• ✅ Transfer\n`;
                 }
                 mensaje += "\n";
             }
             
             // Resumen solo si hay motivos
-            if (totalPaquetes > 0) {
+            if (totalPaquetes > 0 || motivosTemporadaValidos.length > 0) {
                 mensaje += `📊 *RESUMEN MOTIVOS:*\n`;
                 mensaje += `• Total paquetes: ${totalPaquetes}\n`;
                 mensaje += `• Total stencils: ${getTotalStencils()}\n\n`;
             }
             
-            // Colores solo si hay motivos
-            if (totalPaquetes > 0 && selectedColores.length > 0) {
+            // Colores solo si hay algunos seleccionados
+            if (selectedColores.length > 0) {
                 mensaje += "🌈 *COLORES DE GLITTER SOLICITADOS:*\n";
                 selectedColores.forEach(index => {
                     mensaje += `${colores[index].emoji} ${colores[index].name}\n`;
                 });
                 mensaje += "\n";
             }
+            
+            mensaje += "¡Gracias por tu solicitud! 🎨✨";
             
             // Enviar por WhatsApp
             const numeroWhatsApp = "573004081897";
@@ -1792,8 +1847,6 @@
             
             // Email temporalmente desactivado - se puede activar después
             // enviarEmail(fecha, puntoVenta, nombreCompleto, telefono, mensaje);
-            
-            mensaje += "¡Gracias por tu solicitud! 🎨✨";
             
             showAlert('✅ ¡Solicitud enviada por WhatsApp! Pronto recibirás respuesta 🎉', 'success');
         }
