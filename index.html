@@ -928,6 +928,62 @@
             color: #E50695;
         }
 
+        .otros-materiales-input-container {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #E50695;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .otros-materiales-input-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(229, 6, 149, 0.3);
+        }
+
+        .otros-materiales-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: 2px solid #E50695;
+            border-radius: 8px;
+            background: #000;
+            color: white;
+            font-size: 1em;
+            font-family: Arial, sans-serif;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .otros-materiales-textarea:focus {
+            outline: none;
+            border-color: #ff69b4;
+            box-shadow: 0 0 0 3px rgba(229, 6, 149, 0.3);
+        }
+
+        .otros-materiales-textarea::placeholder {
+            color: #999;
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        /* Status indicator for button */
+        .button-status {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+
+        .button-status.ready {
+            color: #28a745;
+        }
+
+        .button-status.incomplete {
+            color: #ff8c00;
+        }
+
         @media (max-width: 768px) {
             .counters {
                 flex-direction: column;
@@ -962,14 +1018,6 @@
                 padding: 15px;
                 min-height: auto;
                 gap: 15px;
-            }
-
-            .motivo-image-container {
-                min-width: 80px;
-                min-height: 80px;
-                width: 80px;
-                height: 80px;
-                padding: 10px;
             }
 
             .motivo-image {
@@ -1061,6 +1109,16 @@
                 flex-direction: row;
                 gap: 10px;
             }
+            
+            .otros-materiales-textarea {
+                font-size: 1em;
+                min-height: 80px;
+            }
+            
+            .otros-materiales-input-container {
+                padding: 15px;
+                margin-top: 10px;
+            }
         }
 
     </style>
@@ -1106,10 +1164,10 @@
             <div class="info-section">
                 <h3>👥 INFORMACIÓN IMPORTANTE</h3>
                 <div class="info-item">
-                    📋 Cada paquete contiene 30 stencils del mismo motivo
+                    🎨 Cada solicitud es individual y flexible
                 </div>
                 <div class="info-item">
-                    🎨 Recuerda seleccionar los colores de glitter que necesitas
+                    📋 Puedes pedir solo lo que necesites: motivos, colores, o productos
                 </div>
                 <div class="info-item">
                     📦 Los pedidos se procesan según disponibilidad en inventario
@@ -1221,6 +1279,48 @@
                             <span class="toggle-label" id="label-transfer">NO</span>
                         </div>
                     </div>
+
+                    <div class="producto-item">
+                        <div class="producto-info">
+                            <div class="producto-icon">📢</div>
+                            <div class="producto-details">
+                                <div class="producto-name">Publicidad</div>
+                                <div class="producto-description">Material promocional</div>
+                            </div>
+                        </div>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="toggle-publicidad" onchange="toggleProductoAdicional('publicidad')">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label" id="label-publicidad">NO</span>
+                        </div>
+                    </div>
+
+                    <div class="producto-item" id="otros-materiales-container">
+                        <div class="producto-info">
+                            <div class="producto-icon">📦</div>
+                            <div class="producto-details">
+                                <div class="producto-name">Otros Materiales</div>
+                                <div class="producto-description">Especifica qué otros materiales necesitas</div>
+                            </div>
+                        </div>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="toggle-otros-materiales" onchange="toggleOtrosMateriales()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label" id="label-otros-materiales">NO</span>
+                        </div>
+                    </div>
+
+                    <div class="otros-materiales-input-container" id="otros-materiales-input" style="display: none;">
+                        <textarea class="otros-materiales-textarea" 
+                                  id="textarea-otros-materiales"
+                                  placeholder="Describe qué otros materiales necesitas...&#10;Ej: Bolsas, Etiquetas, Folletos, etc."
+                                  onchange="updateOtrosMaterialesTexto()"
+                                  onkeyup="updateOtrosMaterialesTexto()"></textarea>
+                    </div>
                 </div>
             </div>
 
@@ -1276,6 +1376,10 @@
                 </div>
             </div>
 
+            <div class="button-status" id="buttonStatus">
+                💡 Llena al menos un campo y los datos personales para activar el botón
+            </div>
+
             <button class="whatsapp-btn" id="whatsappBtn" onclick="enviarWhatsApp()" disabled>
                 📱 Enviar Solicitud por WhatsApp
             </button>
@@ -1318,7 +1422,7 @@
             'Batman': 'motivos/K_Batman.png',
             'Beso': 'motivos/K_Beso.png',
             'Caballo': 'motivos/K_Caballo.png',
-            'Carita feliz': 'motivos/K_Carita_feliz.png',
+            'Carita feliz': 'motivos/K_Carita_Feliz.png',
             'Corazón Karol G': 'motivos/K_Crazon_CG.png',
             'Delfín': 'motivos/K_Delfin.png',
             'Dinosaurio': 'motivos/K_Dinosaurio.png',
@@ -1348,8 +1452,11 @@
         let motivosTemporada = [];
         let productosAdicionales = {
             pegaMagica: false,
-            transfer: false
+            transfer: false,
+            publicidad: false,
+            otrosMateriales: false
         };
+        let otrosMaterialesTexto = '';
         let currentStep = 1;
 
         function handleImageError(img) {
@@ -1640,6 +1747,43 @@
             updateWhatsAppButton();
         }
 
+        function toggleOtrosMateriales() {
+            productosAdicionales.otrosMateriales = !productosAdicionales.otrosMateriales;
+            
+            // Actualizar el toggle visualmente
+            const toggle = document.getElementById('toggle-otros-materiales');
+            const label = document.getElementById('label-otros-materiales');
+            const inputContainer = document.getElementById('otros-materiales-input');
+            
+            toggle.checked = productosAdicionales.otrosMateriales;
+            label.textContent = productosAdicionales.otrosMateriales ? 'SÍ' : 'NO';
+            label.classList.toggle('active', productosAdicionales.otrosMateriales);
+            
+            // Mostrar/ocultar el campo de texto
+            if (productosAdicionales.otrosMateriales) {
+                inputContainer.style.display = 'block';
+                // Focus en el textarea después de un pequeño delay para la animación
+                setTimeout(() => {
+                    document.getElementById('textarea-otros-materiales').focus();
+                }, 300);
+            } else {
+                inputContainer.style.display = 'none';
+                otrosMaterialesTexto = '';
+                document.getElementById('textarea-otros-materiales').value = '';
+            }
+            
+            updateCounters();
+            updateSummary();
+            updateWhatsAppButton();
+        }
+
+        function updateOtrosMaterialesTexto() {
+            const textarea = document.getElementById('textarea-otros-materiales');
+            otrosMaterialesTexto = textarea.value.trim();
+            updateSummary();
+            updateWhatsAppButton();
+        }
+
         function updateCounters() {
             const totalPaquetes = getTotalPaquetes();
             const totalStencils = getTotalStencils();
@@ -1672,6 +1816,13 @@
                     if (productosAdicionales.transfer) {
                         productosTexto.push('✅ Transfer');
                     }
+                    if (productosAdicionales.publicidad) {
+                        productosTexto.push('✅ Publicidad');
+                    }
+                    if (productosAdicionales.otrosMateriales) {
+                        const textoOtros = otrosMaterialesTexto ? ` (${otrosMaterialesTexto.substring(0, 30)}${otrosMaterialesTexto.length > 30 ? '...' : ''})` : '';
+                        productosTexto.push(`✅ Otros Materiales${textoOtros}`);
+                    }
                     document.getElementById('summaryProductos').textContent = productosTexto.join(', ');
                     document.getElementById('summaryProductosContainer').style.display = 'flex';
                 } else {
@@ -1684,22 +1835,6 @@
             }
         }
 
-        function updateWhatsAppButton() {
-            const btn = document.getElementById('whatsappBtn');
-            const hasRequiredFields = validateRequiredFields();
-            
-            // Verificar si tienen al menos algo seleccionado
-            const hasMotivos = getTotalPaquetes() > 0;
-            const hasTemporada = motivosTemporada.some(motivo => motivo.nombre.trim() !== '' && motivo.cantidad > 0);
-            const hasColores = selectedColores.length > 0;
-            const hasProductosAdicionales = Object.values(productosAdicionales).some(selected => selected === true);
-            
-            // Permitir envío si tienen al menos UNA de estas opciones
-            const hasValidSelection = hasMotivos || hasTemporada || hasColores || hasProductosAdicionales;
-            
-            btn.disabled = !hasValidSelection || !hasRequiredFields;
-        }
-
         function validateRequiredFields() {
             const fecha = document.getElementById('fecha').value.trim();
             const puntoVenta = document.getElementById('puntoVenta').value.trim();
@@ -1707,6 +1842,50 @@
             const telefono = document.getElementById('telefono').value.trim();
             
             return fecha && puntoVenta && nombreCompleto && telefono;
+        }
+
+        function hasValidSelections() {
+            const hasMotivos = getTotalPaquetes() > 0;
+            const hasTemporada = motivosTemporada.some(motivo => motivo.nombre.trim() !== '' && motivo.cantidad > 0);
+            const hasColores = selectedColores.length > 0;
+            const hasProductosAdicionales = Object.values(productosAdicionales).some(selected => selected === true);
+            
+            return hasMotivos || hasTemporada || hasColores || hasProductosAdicionales;
+        }
+
+        function updateWhatsAppButton() {
+            const btn = document.getElementById('whatsappBtn');
+            const statusDiv = document.getElementById('buttonStatus');
+            
+            const hasRequiredFields = validateRequiredFields();
+            const hasValidSelection = hasValidSelections();
+            
+            // Verificar que si seleccionaron "Otros Materiales" hayan escrito algo
+            const otrosMaterialesCompleto = !productosAdicionales.otrosMateriales || 
+                                          (productosAdicionales.otrosMateriales && otrosMaterialesTexto.trim() !== '');
+            
+            const canSend = hasValidSelection && hasRequiredFields && otrosMaterialesCompleto;
+            
+            // Actualizar estado del botón
+            btn.disabled = !canSend;
+            
+            // Actualizar mensaje de estado
+            if (!hasValidSelection && !hasRequiredFields) {
+                statusDiv.textContent = '💡 Selecciona al menos un producto y completa tus datos personales';
+                statusDiv.className = 'button-status incomplete';
+            } else if (!hasValidSelection) {
+                statusDiv.textContent = '⚠️ Selecciona al menos un motivo, color o producto adicional';
+                statusDiv.className = 'button-status incomplete';
+            } else if (!hasRequiredFields) {
+                statusDiv.textContent = '⚠️ Completa todos los campos de información personal';
+                statusDiv.className = 'button-status incomplete';
+            } else if (!otrosMaterialesCompleto) {
+                statusDiv.textContent = '⚠️ Describe qué otros materiales necesitas o desactiva la opción';
+                statusDiv.className = 'button-status incomplete';
+            } else {
+                statusDiv.textContent = '✅ ¡Todo listo! Puedes enviar tu solicitud';
+                statusDiv.className = 'button-status ready';
+            }
         }
 
         function showAlert(message, type) {
@@ -1718,47 +1897,9 @@
             document.getElementById('alerts').innerHTML = '';
         }
 
-        // Configuración de EmailJS
-        function initEmailJS() {
-            if (typeof emailjs !== 'undefined') {
-                emailjs.init("uDHZIzgPwg1IuqUAd"); // Public Key configurada
-                console.log('EmailJS inicializado correctamente');
-            } else {
-                console.log('EmailJS no se pudo cargar');
-            }
-        }
-
-        function enviarEmail(fecha, puntoVenta, nombreCompleto, telefono, mensaje) {
-            if (typeof emailjs === 'undefined') {
-                console.log('EmailJS no disponible, saltando envío de email');
-                return;
-            }
-
-            const templateParams = {
-                fecha: fecha,
-                punto_venta: puntoVenta,
-                nombre_completo: nombreCompleto,
-                telefono: telefono,
-                mensaje_completo: mensaje,
-                to_email: 'tatuajeskokito@gmail.com'
-            };
-
-            emailjs.send('service_usn17i5', 'template_lmufg65', templateParams)
-                .then(function(response) {
-                    console.log('Email enviado exitosamente:', response.status, response.text);
-                }, function(error) {
-                    console.log('Error al enviar email:', error);
-                });
-        }
-
         function enviarWhatsApp() {
-            const totalPaquetes = getTotalPaquetes();
-            const hasTemporada = motivosTemporada.some(motivo => motivo.nombre.trim() !== '' && motivo.cantidad > 0);
-            const hasColores = selectedColores.length > 0;
-            const hasProductosAdicionales = Object.values(productosAdicionales).some(selected => selected === true);
-            
-            // Verificar que tengan al menos algo seleccionado
-            if (totalPaquetes === 0 && !hasTemporada && !hasColores && !hasProductosAdicionales) {
+            // Validaciones finales
+            if (!hasValidSelections()) {
                 showAlert('❌ Debes seleccionar al menos un producto', 'danger');
                 return;
             }
@@ -1775,12 +1916,19 @@
                 return;
             }
 
+            // Validar que si seleccionaron "Otros Materiales" hayan escrito algo
+            if (productosAdicionales.otrosMateriales && otrosMaterialesTexto.trim() === '') {
+                showAlert('❌ Por favor describe qué otros materiales necesitas o desactiva la opción', 'danger');
+                return;
+            }
+
             const fecha = document.getElementById('fecha').value;
             const puntoVenta = document.getElementById('puntoVenta').value.trim();
             const nombreCompleto = document.getElementById('nombreCompleto').value.trim();
             const telefono = document.getElementById('telefono').value.trim();
 
-            let mensaje = "📦 *SOLICITUD DE MATERIAL KOKITO STAR* 📦\n\n";
+            let mensaje = `📦 *SOLICITUD DE MATERIAL KOKITO STAR* 📦\n`;
+            mensaje += `🏪 *PUNTO DE VENTA: ${puntoVenta.toUpperCase()}*\n\n`;
             
             mensaje += "👤 *INFORMACIÓN PERSONAL:*\n";
             mensaje += `📅 *Fecha:* ${fecha}\n`;
@@ -1794,8 +1942,7 @@
                 mensaje += "🎨 *MOTIVOS REGULARES:*\n";
                 motivosRegularesSeleccionados.forEach(motivo => {
                     const cantidad = selectedMotivos[motivo];
-                    const stencils = cantidad * 30;
-                    mensaje += `• ${motivo}: ${cantidad} paquete(s) = ${stencils} stencils\n`;
+                    mensaje += `• ${motivo}: ${cantidad} paquete${cantidad > 1 ? 's' : ''}\n`;
                 });
                 mensaje += "\n";
             }
@@ -1804,13 +1951,13 @@
             if (motivosTemporadaValidos.length > 0) {
                 mensaje += "✨ *MOTIVOS DE TEMPORADA:*\n";
                 motivosTemporadaValidos.forEach(motivo => {
-                    const stencils = motivo.cantidad * 30;
-                    mensaje += `• ${motivo.nombre}: ${motivo.cantidad} paquete(s) = ${stencils} stencils\n`;
+                    mensaje += `• ${motivo.nombre}: ${motivo.cantidad} paquete${motivo.cantidad > 1 ? 's' : ''}\n`;
                 });
                 mensaje += "\n";
             }
             
             // Productos adicionales
+            const hasProductosAdicionales = Object.values(productosAdicionales).some(selected => selected === true);
             if (hasProductosAdicionales) {
                 mensaje += "🧪 *PRODUCTOS ADICIONALES:*\n";
                 if (productosAdicionales.pegaMagica) {
@@ -1819,10 +1966,17 @@
                 if (productosAdicionales.transfer) {
                     mensaje += `• ✅ Transfer\n`;
                 }
+                if (productosAdicionales.publicidad) {
+                    mensaje += `• ✅ Publicidad\n`;
+                }
+                if (productosAdicionales.otrosMateriales) {
+                    mensaje += `• ✅ Otros Materiales: ${otrosMaterialesTexto}\n`;
+                }
                 mensaje += "\n";
             }
             
             // Resumen solo si hay motivos
+            const totalPaquetes = getTotalPaquetes();
             if (totalPaquetes > 0 || motivosTemporadaValidos.length > 0) {
                 mensaje += `📊 *RESUMEN MOTIVOS:*\n`;
                 mensaje += `• Total paquetes: ${totalPaquetes}\n`;
@@ -1845,21 +1999,12 @@
             const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
             window.open(urlWhatsApp, '_blank');
             
-            // Email temporalmente desactivado - se puede activar después
-            // enviarEmail(fecha, puntoVenta, nombreCompleto, telefono, mensaje);
-            
             showAlert('✅ ¡Solicitud enviada por WhatsApp! Pronto recibirás respuesta 🎉', 'success');
         }
-
 
         // Inicializar la aplicación
         document.addEventListener('DOMContentLoaded', function() {
             initializeApp();
-            
-            // EmailJS temporalmente desactivado
-            // setTimeout(() => {
-            //     initEmailJS();
-            // }, 1000);
             
             // Event listeners para validar formulario en tiempo real
             const formInputs = ['fecha', 'puntoVenta', 'nombreCompleto', 'telefono'];
@@ -1874,3 +2019,12 @@
     </script>
 </body>
 </html>
+            -container {
+                min-width: 80px;
+                min-height: 80px;
+                width: 80px;
+                height: 80px;
+                padding: 10px;
+            }
+
+            .motivo-image
