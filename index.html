@@ -719,7 +719,7 @@
         .kit-image-container {
             background: #ffffff;
             border-radius: 50%;
-            padding: 15px;
+            padding: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -739,14 +739,14 @@
             right: -2px;
             bottom: -2px;
             background: linear-gradient(45deg, #E50695, #ff69b4, #ff1493, #E50695);
-            border-radius: 50%;
+            border-radius: 30%;
             z-index: -1;
             animation: rotate 4s linear infinite;
         }
 
         .kit-image {
-            width: 70px;
-            height: 70px;
+            width: 100px;
+            height: 100px;
             object-fit: contain;
             filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
         }
@@ -1573,23 +1573,9 @@
         </div>
 
         <div class="header">
-            <h1>📦 SOLICITUD DE MATERIAL</h1>
+            <h2>📦 SOLICITUD DE MATERIAL</h2>
             <p>Sistema para colaboradoras de Kokito Star</p>
         </div>
-
-        <div class="content">
-            <div class="info-section">
-                <h3>👥 INFORMACIÓN IMPORTANTE</h3>
-                <div class="info-item">
-                    🎨 Cada solicitud es individual y flexible
-                </div>
-                <div class="info-item">
-                    📋 Puedes pedir solo lo que necesites: motivos, colores, kits o productos
-                </div>
-                <div class="info-item">
-                    📦 Los pedidos se procesan según disponibilidad en inventario
-                </div>
-            </div>
 
             <div class="instructions">
                 <h3>📋 ¿Cómo hacer tu solicitud?</h3>
@@ -1651,44 +1637,6 @@
                 <h2 class="section-title">🎨 Selecciona tus Motivos <span style="font-family: Arial, sans-serif; font-weight: normal;">(1 paquete = 30 stencils)</span></h2>
                 <div class="motivos-grid" id="motivosGrid"></div>
             </div>
-
-            <div class="section">
-                <h2 class="section-title">🎁 Kits Completos para Punto de Venta</h2>
-                <div class="kits-section">
-                    <div class="kit-importance">
-                        <h4>🌟 IMPORTANCIA DE LOS KITS EN TU PUNTO DE VENTA</h4>
-                        <ul class="kit-importance-points">
-                            <li>✅ <strong>Incrementa tus ventas:</strong> Los kits permiten ofrecer más opciones a tus clientes</li>
-                            <li>🎯 <strong>Compromiso de venta:</strong> Al solicitar kits, te comprometes a promocionarlos activamente</li>
-                            <li>🚀 <strong>Diversifica tu negocio:</strong> Amplia tu portafolio de productos Kokito Star</li>
-                            <li>💎 <strong>Productos de alta calidad:</strong> Kits premium que generan mayor margen de ganancia</li>
-                            <li>🎨 <strong>Experiencia completa:</strong> Ofrece soluciones integrales a tus clientes</li>
-                        </ul>
-                    </div>
-
-                    <div class="kit-item">
-                        <div class="kit-image-container">
-                            <img src="motivos/K_kit.png" alt="Kit Kokito Star" class="kit-image" 
-                                 onerror="this.style.display='none'; this.parentNode.innerHTML='🎁';">
-                        </div>
-                        <div class="kit-details">
-                            <div class="kit-name">Kit Completo Kokito Star</div>
-                            <div class="kit-description">
-                                Kit completo con 30 motivos diferentes, 6 colores de glitter, pega mágica, transfer y todo lo necesario para ofrecer tatuajes temporales profesionales en tu punto de venta.
-                            </div>
-                            <div class="kit-controls">
-                                <span class="kit-quantity-label">Cantidad:</span>
-                                <input type="number" class="kit-quantity-input" id="kitQuantity" 
-                                       min="0" max="5" value="0" 
-                                       onchange="updateKitQuantity()" 
-                                       onkeyup="updateKitQuantity()">
-                                <span class="kit-max-info">(máximo 5 kits)</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div class="section">
                 <h2 class="section-title">✨ Motivos de Temporada <span style="font-family: Arial, sans-serif; font-weight: normal;">(Ej: Kuromi, My Melody, Stitch, Labubu, etc.)</span></h2>
                 <div class="temporada-section">
@@ -1781,6 +1729,39 @@
                                   placeholder="Describe qué otros materiales necesitas...&#10;Ej: Bolsas, Etiquetas, Folletos, etc."
                                   onchange="updateOtrosMaterialesTexto()"
                                   onkeyup="updateOtrosMaterialesTexto()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">🎁 Kits Completos para Punto de Venta</h2>
+                <div class="kits-section">
+                    <div class="kit-importance">
+                        <h4>🌟 IMPORTANCIA DE LOS KITS EN TU PUNTO DE VENTA</h4>
+                        <ul class="kit-importance-points">
+                            <li>🎨 <strong>Comisión directa:</strong> Recibes $5.000 de comisión por cada kit vendido</li>
+                        </ul>
+                    </div>
+
+                    <div class="kit-item">
+                        <div class="kit-image-container">
+                            <img src="motivos/K_kit.png" alt="Kit Kokito Star" class="kit-image" 
+                                 onerror="this.style.display='none'; this.parentNode.innerHTML='🎁';">
+                        </div>
+                        <div class="kit-details">
+                            <div class="kit-name">Kit Completo Kokito Star</div>
+                            <div class="kit-description">
+                                Kit completo con 30 motivos diferentes, 6 colores de glitter, pega mágica, transfer y todo lo necesario para ofrecer tatuajes temporales profesionales en tu punto de venta.
+                            </div>
+                            <div class="kit-controls">
+                                <span class="kit-quantity-label">Cantidad:</span>
+                                <input type="number" class="kit-quantity-input" id="kitQuantity" 
+                                       min="0" max="5" value="0" 
+                                       onchange="updateKitQuantity()" 
+                                       onkeyup="updateKitQuantity()">
+                                <span class="kit-max-info">(máximo 5 kits)</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
